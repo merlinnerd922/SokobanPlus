@@ -385,9 +385,21 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 7913691397453253480, guid: 48d5e04ea6ab80a4d9a111d5b0c6176a, type: 3}
+      propertyPath: mainCamera
+      value: 
+      objectReference: {fileID: 963194227}
+    - target: {fileID: 7913691397453253480, guid: 48d5e04ea6ab80a4d9a111d5b0c6176a, type: 3}
       propertyPath: boardCubePrefab
       value: 
       objectReference: {fileID: 35577744479573251, guid: c84780360d135684f8c8b6a0dc59eae2, type: 3}
+    - target: {fileID: 7913691397453253480, guid: 48d5e04ea6ab80a4d9a111d5b0c6176a, type: 3}
+      propertyPath: boardCubeOddPrefab
+      value: 
+      objectReference: {fileID: 35577744479573251, guid: c84780360d135684f8c8b6a0dc59eae2, type: 3}
+    - target: {fileID: 7913691397453253480, guid: 48d5e04ea6ab80a4d9a111d5b0c6176a, type: 3}
+      propertyPath: boardCubeEvenPrefab
+      value: 
+      objectReference: {fileID: 35577744479573251, guid: 69eda9a388a0c3e4ca79cbe32d44833b, type: 3}
     - target: {fileID: 7913691397453253494, guid: 48d5e04ea6ab80a4d9a111d5b0c6176a, type: 3}
       propertyPath: m_Name
       value: Board
