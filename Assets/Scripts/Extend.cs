@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using Random = System.Random;
 
 namespace DefaultNamespace
 {
     public static class Extend
     {
+        public static Random rand = new Random();
         public static bool IsOdd(this int i)
         {
             return i % 2 == 1;
@@ -27,6 +29,11 @@ namespace DefaultNamespace
         public static void SetRotation(this Camera c, int x, int y, int z)
         {
             c.transform.rotation = Quaternion.Euler(x, y, z);
+        }
+        
+        public static int GetRandInt(int startInclusive, int endExclusive)
+        {
+            return rand.Next(startInclusive, endExclusive);
         }
     }
 }
