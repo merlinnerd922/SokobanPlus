@@ -27,9 +27,6 @@ public class SokobanBoard : MonoBehaviour
         }
 
         var boardBounds = gameObject.GetMaxBounds();
-
-        mainCamera.SetHeight(10);
-        mainCamera.SetRotation(0, -90, 0);
     }
 
     private void GenerateCube(int i, int j)
