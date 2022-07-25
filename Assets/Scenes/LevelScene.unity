@@ -323,6 +323,10 @@ PrefabInstance:
       propertyPath: sokobanBoard
       value: 
       objectReference: {fileID: 696847856}
+    - target: {fileID: 209580765363169056, guid: d10e9ff08d8586f479a31f190cfe4fa2, type: 3}
+      propertyPath: boardCubePrefab
+      value: 
+      objectReference: {fileID: 35577744479573251, guid: c84780360d135684f8c8b6a0dc59eae2, type: 3}
     - target: {fileID: 209580765363169062, guid: d10e9ff08d8586f479a31f190cfe4fa2, type: 3}
       propertyPath: m_Name
       value: God
@@ -380,6 +384,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 7913691397453253480, guid: 48d5e04ea6ab80a4d9a111d5b0c6176a, type: 3}
+      propertyPath: boardCubePrefab
+      value: 
+      objectReference: {fileID: 35577744479573251, guid: c84780360d135684f8c8b6a0dc59eae2, type: 3}
     - target: {fileID: 7913691397453253494, guid: 48d5e04ea6ab80a4d9a111d5b0c6176a, type: 3}
       propertyPath: m_Name
       value: Board

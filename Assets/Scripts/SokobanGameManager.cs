@@ -5,7 +5,8 @@ using UnityEngine;
 public class SokobanGameManager : MonoBehaviour
 {
     public SokobanBoard sokobanBoard;
-
+    
+    
     public void Start()
     {
         sokobanBoard.Initialize();
