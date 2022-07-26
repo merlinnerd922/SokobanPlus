@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 using Random = System.Random;
 
 namespace DefaultNamespace
 {
     public static class Extend
     {
-        public static Random rand = new Random();
+        private static readonly Random RAND = new Random();
         public static bool IsOdd(this int i)
         {
             return i % 2 == 1;
@@ -33,7 +35,18 @@ namespace DefaultNamespace
         
         public static int GetRandInt(int startInclusive, int endExclusive)
         {
-            return rand.Next(startInclusive, endExclusive);
+            return RAND.Next(startInclusive, endExclusive);
+        }
+
+        public static  T GetRandom<T>(this IEnumerable<T> set)
+        {
+            IEnumerable<T> enumerable = set as T[] ?? set.ToArray();
+            return enumerable.ElementAt(RAND.Next(enumerable.Count()));
+        }
+
+        public static HashSet<T> GetRandomN<T>(this HashSet<T> set, int numElements)
+        {
+            return set.OrderBy(_ => RAND.Next()).Take(numElements).ToHashSet();
         }
     }
 }
