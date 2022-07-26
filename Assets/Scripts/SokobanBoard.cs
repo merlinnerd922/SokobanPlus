@@ -1,14 +1,8 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
-using static DefaultNamespace.Extend;
-using Object = UnityEngine.Object;
-using Random = System.Random;
 
 public class SokobanBoard : MonoBehaviour
 {
@@ -23,21 +17,23 @@ public class SokobanBoard : MonoBehaviour
 
     public Camera mainCamera;
     private int NUM_BOXES = 3;
-    public BoxCube boxPrefab;
+    public SokobanBlock boxPrefab;
     private HashSet<Vector2Int> _emptySpots;
+    
     public PlayerObject playerPrefab;
-    private HashSet<Vector2Int> boxSlots;
-    public BoxSlotPrefab boxSlotPrefab;
+    private HashSet<Vector2Int> boxReceptacles;
+    [FormerlySerializedAs("boxSlotPrefab")] 
+    public BoxReceptacle boxReceptacle;
     private HashSet<Vector2Int> corners;
     private SokobanGameManager _sokobanGameManager;
     internal PlayerObject thisPlayer;
-    private HashSet<Vector2Int> _blockPositions;
-    private const int BLOCK_ELEVATION = 1;
+    internal Dictionary<Vector2Int, SokobanBlock> _blockPositions;
+    internal const int BLOCK_ELEVATION = 1;
 
 
     public void Initialize(SokobanGameManager sokobanGameManager)
     {
-        this._sokobanGameManager = sokobanGameManager;
+        _sokobanGameManager = sokobanGameManager;
         
         InitializeEmptySpots();
         CalculateCorners();
@@ -78,7 +74,7 @@ public class SokobanBoard : MonoBehaviour
 
     private void AllocateBoxSlots()
     {
-        boxSlots = GetRandomEmptySlots(numSlots: NUM_BOXES);
+        boxReceptacles = GetRandomEmptySlots(numSlots: NUM_BOXES);
     }
 
     private HashSet<Vector2Int> GetRandomEmptySlots(int numSlots)
@@ -88,7 +84,7 @@ public class SokobanBoard : MonoBehaviour
 
     private void GenerateBoxes()
     {
-        _blockPositions = new HashSet<Vector2Int>();
+        _blockPositions = new Dictionary<Vector2Int, SokobanBlock>();
         for (int i = 0; i < NUM_BOXES; i++)
         {
             Vector2Int vec = GetRandomEmptySlot(useBoxSlots: false, ignoreCorners:true);
@@ -112,7 +108,7 @@ public class SokobanBoard : MonoBehaviour
         HashSet<Vector2Int> theseSlots = new(_emptySpots);
         if (!useBoxSlots)
         {
-            theseSlots.RemoveWhere(x => boxSlots.Contains(x));
+            theseSlots.RemoveWhere(x => boxReceptacles.Contains(x));
         }
 
         if (ignoreCorners)
@@ -132,10 +128,10 @@ public class SokobanBoard : MonoBehaviour
     {
         Vector2Int vec = GetRandomEmptySlot(useBoxSlots: true);
         thisPlayer = Instantiate(playerPrefab, new Vector3(vec.x, 1, vec.y), Quaternion.identity);
-        var playerPosition = new Vector2Int(vec.x, vec.y);
+        Vector2Int playerPosition = new Vector2Int(vec.x, vec.y);
         RemoveEmptySlot(playerPosition);
 
-        thisPlayer.Init(this._sokobanGameManager, playerPosition);
+        thisPlayer.Init(_sokobanGameManager, playerPosition);
     }
 
     internal void RemoveEmptySlot(Vector2Int playerPosition)
@@ -145,12 +141,11 @@ public class SokobanBoard : MonoBehaviour
 
     private void GenerateBox(int i, int j)
     {
-        Instantiate(boxPrefab, new Vector3(i, BLOCK_ELEVATION, j), Quaternion.identity);
-        RemoveEmptySlot(i, j);
-        _blockPositions.Add(new Vector2Int(i, j));
+        SokobanBlock newPrefab = Instantiate(boxPrefab, new Vector3(i, BLOCK_ELEVATION, j), Quaternion.identity);
+        newPrefab.InitBlock(i, j, _sokobanGameManager);
     }
 
-    private void RemoveEmptySlot(int i, int j)
+    public void RemoveEmptySlot(int i, int j)
     {
         RemoveEmptySlot(new Vector2Int(i, j));
     }
@@ -158,14 +153,14 @@ public class SokobanBoard : MonoBehaviour
 
     private void GenerateFloorCube(int i, int j)
     {
-        if (boxSlots.Contains(new Vector2Int(i, j)))
+        if (boxReceptacles.Contains(new Vector2Int(i, j)))
         {
-            Instantiate(boxSlotPrefab.gameObject, new Vector3(i, 0, j), Quaternion.identity, this.transform);
+            Instantiate(boxReceptacle.gameObject, new Vector3(i, 0, j), Quaternion.identity, transform);
             return;
         }
 
         var prefabToGenerate = (i + j).IsOdd() ? floorCubeOddPrefab.gameObject : floorCubeEvenPrefab.gameObject;
-        Instantiate(prefabToGenerate, new Vector3(i, 0, j), Quaternion.identity, this.transform);
+        Instantiate(prefabToGenerate, new Vector3(i, 0, j), Quaternion.identity, transform);
     }
 
     public void AddEmptySlot(Vector2Int oldPosition)
@@ -175,7 +170,7 @@ public class SokobanBoard : MonoBehaviour
 
     public bool PositionHasBlock(Vector2Int newPosition)
     {
-        return _blockPositions.Contains(newPosition);
+        return _blockPositions.Keys.Contains(newPosition);
     }
 
     public Vector2Int GetPositionRelativeToInDirection(Vector2Int newPosition, PlayerDirection directionFromKeyCode)
@@ -185,7 +180,17 @@ public class SokobanBoard : MonoBehaviour
 
     public static bool PositionIsOnBoard(Vector2Int somePosition)
     {
-        return somePosition.x.InRange(lowerBoundInclusive: 0, upperBoundExclusive: SokobanBoard.BOARD_WIDTH) &&
-               somePosition.y.InRange(lowerBoundInclusive: 0, upperBoundExclusive: SokobanBoard.BOARD_LENGTH);
+        return somePosition.x.InRange(lowerBoundInclusive: 0, upperBoundExclusive: BOARD_WIDTH) &&
+               somePosition.y.InRange(lowerBoundInclusive: 0, upperBoundExclusive: BOARD_LENGTH);
+    }
+
+    public SokobanBlock GetBlock(Vector2Int blockPosition)
+    {
+        return _blockPositions[blockPosition];
+    }
+
+    public static Vector2Int GetVectorInDirection(PlayerDirection dir)
+    {
+        return SokobanGameManager.DIRECTION_VECTOR_MAPPING[dir];
     }
 }

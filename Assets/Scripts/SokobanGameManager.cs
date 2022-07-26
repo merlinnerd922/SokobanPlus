@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static DefaultNamespace.Extend;
-using Debug = System.Diagnostics.Debug;
 
 public class SokobanGameManager : MonoBehaviour
 {
@@ -69,7 +68,7 @@ public class SokobanGameManager : MonoBehaviour
 
     private PlayerDirection GetDirectionFromKeyCode(KeyCode pressedKeyCode)
     {
-        return _keyCodeDirectionMapping[(KeyCode) pressedKeyCode];
+        return _keyCodeDirectionMapping[pressedKeyCode];
     }
 
     private KeyCode? GetPressedDirectionCode()

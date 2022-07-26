@@ -45,11 +45,12 @@
      <Compile Include="Assets\Scripts\SokobanBoard.cs" />
      <Compile Include="Assets\Scripts\objects\BoardCube.cs" />
      <Compile Include="Assets\Scripts\Extend.cs" />
-     <Compile Include="Assets\Scripts\objects\BoxCube.cs" />
+     <Compile Include="Assets\Scripts\objects\SokobanBlock.cs" />
      <Compile Include="Assets\Scripts\objects\PlayerObject.cs" />
-     <Compile Include="Assets\Scripts\objects\BoxSlotPrefab.cs" />
+     <Compile Include="Assets\Scripts\objects\BoxReceptacle.cs" />
      <Compile Include="Assets\Scripts\EmptyCollectionException.cs" />
      <Compile Include="Assets\Scripts\objects\PlayerDirection.cs" />
+     <Compile Include="Assets\Scripts\objects\SokobanMovable.cs" />
      <Reference Include="UnityEngine">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.6f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>

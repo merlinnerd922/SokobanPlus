@@ -1,16 +1,11 @@
 using System.Collections;
-using System.Collections.Generic;
-using DefaultNamespace;
 using UnityEngine;
-using Debug = System.Diagnostics.Debug;
 
-public class PlayerObject : MonoBehaviour
+public class PlayerObject : SokobanMovable
 {
-    private SokobanGameManager _gameManager;
 
     private const int PLAYER_SPEED = 4;
-    
-    private Vector2Int? _currentPosition;
+
 
 
     private float PLAYER_ELEVATION = 1;
@@ -20,26 +15,67 @@ public class PlayerObject : MonoBehaviour
     {
         _gameManager._gameState = SokobanGameState.IN_MOTION;
         var thisCurrentPosition = GetCurrentPosition();
-        Vector2Int oldPosition = thisCurrentPosition;
-        Vector2Int newPosition = thisCurrentPosition + GetIncrementFromDirection(dir);
+        Vector2Int playerOldPosition = thisCurrentPosition;
+        Vector2Int playerNewPosition = thisCurrentPosition + SokobanBoard.GetVectorInDirection(dir);
+
+        // If the player is moving in the direction of a block, then push that block as well.
+        SokobanBlock blockToMove = null;
+        bool blockToMoveIsNonNull = false;
+        Vector2Int? blockOldPosition = null;
+        Vector2Int? blockNewPosition = null;
+
+        if (PositionHasBlock(playerNewPosition))
+        {
+            blockToMoveIsNonNull = true;
+            blockToMove = GetBlock(playerNewPosition);
+            blockOldPosition = playerNewPosition;
+            blockNewPosition = blockOldPosition + SokobanBoard.GetVectorInDirection(dir);
+        }
 
         float deltaTime = 0;
+
         while (deltaTime < 1)
         {
-            UpdateMovement(deltaTime, oldPosition, newPosition);
+            UpdateMovement(deltaTime, playerOldPosition, playerNewPosition, PLAYER_ELEVATION);
+            if (blockToMoveIsNonNull)
+            {
+                blockToMove.UpdateMovement(deltaTime, (Vector2Int) blockOldPosition, (Vector2Int) blockNewPosition,
+                    sokobanBlockElevation);
+            }
+
             deltaTime += PLAYER_SPEED * Time.deltaTime;
-            yield return null;    
+            yield return null;
         }
+
+        SetSokobanPosition(playerNewPosition);
         
-        SetPlayerPosition(newPosition);
-        _gameManager.sokobanBoard.RemoveEmptySlot(newPosition);
-        _gameManager.sokobanBoard.AddEmptySlot(oldPosition);
+        _gameManager.sokobanBoard.AddEmptySlot(playerOldPosition);
+        if (blockToMoveIsNonNull)
+        {
+            blockToMove.SetSokobanPosition((Vector2Int) blockNewPosition);
+        }
+        else
+        {
+            _gameManager.sokobanBoard.RemoveEmptySlot(playerNewPosition);
+        }
+
         _gameManager._gameState = SokobanGameState.STATIONARY;
     }
 
-    private Vector2Int GetIncrementFromDirection(PlayerDirection dir)
+
+    private float
+        sokobanBlockElevation =>
+        SokobanBoard.BLOCK_ELEVATION;
+
+
+    private SokobanBlock GetBlock(Vector2Int playerNewPosition)
     {
-        return SokobanGameManager.DIRECTION_VECTOR_MAPPING[dir];
+        return sokobanBoard.GetBlock(playerNewPosition);
+    }
+
+    private bool PositionHasBlock(Vector2Int blockPosition)
+    {
+        return sokobanBoard.PositionHasBlock(blockPosition);
     }
 
     private Vector2Int GetCurrentPosition()
@@ -48,33 +84,18 @@ public class PlayerObject : MonoBehaviour
         return (Vector2Int) _currentPosition;
     }
 
-    private void UpdateMovement(float deltaTime, Vector2Int oldPosition, Vector2Int newPosition)
-    {
-        transform.position = Vector3.Lerp(new Vector3(oldPosition.x, PLAYER_ELEVATION, oldPosition.y),
-                                            new Vector3(newPosition.x, PLAYER_ELEVATION, newPosition.y),
-                                            deltaTime);
-    }
 
-    public void Init(SokobanGameManager sokobanGameManager, Vector2Int playerPosition)
-    {
-        _gameManager = sokobanGameManager;
-        SetPlayerPosition(playerPosition);
-    }
 
-    private void SetPlayerPosition(Vector2Int playerPosition)
-    {
-        this._currentPosition = playerPosition;
-    }
 
     public bool CanMove(PlayerDirection directionFromKeyCode)
     {
         // If the player is on the border, they cannot move.
-        var newPosition = GetCurrentPosition() + GetIncrementFromDirection(directionFromKeyCode);
+        var newPosition = GetCurrentPosition() + SokobanBoard.GetVectorInDirection(directionFromKeyCode);
         if (!SokobanBoard.PositionIsOnBoard(newPosition))
         {
             return false;
         }
-        
+
         // If the player is being blocked by a block, then prevent movement.
         return !PlayerIsBlockedByBlock(newPosition, directionFromKeyCode);
     }
@@ -88,8 +109,9 @@ public class PlayerObject : MonoBehaviour
         }
 
         // Case 1: The block is being impeded by another block.
-        var positionRelativeToNewPositionInDirection = sokobanBoard.GetPositionRelativeToInDirection(newPosition, directionFromKeyCode);
-        if (sokobanBoard.PositionHasBlock( positionRelativeToNewPositionInDirection))
+        var positionRelativeToNewPositionInDirection =
+            sokobanBoard.GetPositionRelativeToInDirection(newPosition, directionFromKeyCode);
+        if (sokobanBoard.PositionHasBlock(positionRelativeToNewPositionInDirection))
         {
             return true;
         }
@@ -98,5 +120,4 @@ public class PlayerObject : MonoBehaviour
         return !SokobanBoard.PositionIsOnBoard(positionRelativeToNewPositionInDirection);
     }
 
-    public SokobanBoard sokobanBoard => _gameManager.sokobanBoard;
 }
