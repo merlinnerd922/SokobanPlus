@@ -454,6 +454,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -5386922580794782224, guid: 514247bd1c7d9c0459bff90e1dda58f6, type: 3}
     - target: {fileID: 7913691397453253480, guid: 48d5e04ea6ab80a4d9a111d5b0c6176a, type: 3}
+      propertyPath: boxSlotPrefab
+      value: 
+      objectReference: {fileID: 6908830407260143725, guid: b429a6cf6d9982442808d57457ded433, type: 3}
+    - target: {fileID: 7913691397453253480, guid: 48d5e04ea6ab80a4d9a111d5b0c6176a, type: 3}
       propertyPath: boardCubePrefab
       value: 
       objectReference: {fileID: 35577744479573251, guid: c84780360d135684f8c8b6a0dc59eae2, type: 3}

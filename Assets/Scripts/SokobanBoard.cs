@@ -26,7 +26,7 @@ public class SokobanBoard : MonoBehaviour
     private HashSet<Vector2Int> _emptySpots;
     public PlayerObject playerPrefab;
     private HashSet<Vector2Int> boxSlots;
-    private BoxSlotPrefab boxSlotPrefab;
+    public BoxSlotPrefab boxSlotPrefab;
 
 
     public void Initialize()
