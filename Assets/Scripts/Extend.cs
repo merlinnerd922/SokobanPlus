@@ -12,6 +12,10 @@ namespace DefaultNamespace
         {
             return i % 2 == 1;
         }
+        public static HashSet<T> HashSetOf<T>(params T[] items)
+        {
+            return new(items);
+        }
         
         public static Bounds GetMaxBounds(this GameObject g) {
             var b = new Bounds(g.transform.position, Vector3.zero);

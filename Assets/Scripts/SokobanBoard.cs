@@ -28,10 +28,14 @@ public class SokobanBoard : MonoBehaviour
     private HashSet<Vector2Int> boxSlots;
     public BoxSlotPrefab boxSlotPrefab;
     private HashSet<Vector2Int> corners;
+    private SokobanGameManager _sokobanGameManager;
+    internal PlayerObject thisPlayer;
 
 
-    public void Initialize()
+    public void Initialize(SokobanGameManager sokobanGameManager)
     {
+        this._sokobanGameManager = sokobanGameManager;
+        
         InitializeEmptySpots();
         CalculateCorners();
 
@@ -59,9 +63,14 @@ public class SokobanBoard : MonoBehaviour
         {
             for (int j = 0; j < BOARD_LENGTH; j++)
             {
-                _emptySpots.Add(new Vector2Int(i, j));
+                AddEmptySlot(i, j);
             }
         }
+    }
+
+    private void AddEmptySlot(int i, int j)
+    {
+        _emptySpots.Add(new Vector2Int(i, j));
     }
 
     private void AllocateBoxSlots()
@@ -118,14 +127,27 @@ public class SokobanBoard : MonoBehaviour
     private void GeneratePlayer()
     {
         Vector2Int vec = GetRandomEmptySlot(useBoxSlots: true);
-        Instantiate(playerPrefab, new Vector3(vec.x, 1, vec.y), Quaternion.identity);
-        _emptySpots.Remove(new Vector2Int(vec.x, vec.y));
+        thisPlayer = Instantiate(playerPrefab, new Vector3(vec.x, 1, vec.y), Quaternion.identity);
+        var playerPosition = new Vector2Int(vec.x, vec.y);
+        RemoveEmptySlot(playerPosition);
+
+        thisPlayer.Init(this._sokobanGameManager, playerPosition);
+    }
+
+    internal void RemoveEmptySlot(Vector2Int playerPosition)
+    {
+        _emptySpots.Remove(playerPosition);
     }
 
     private void GenerateBox(int i, int j)
     {
         Instantiate(boxPrefab, new Vector3(i, 1, j), Quaternion.identity);
-        _emptySpots.Remove(new Vector2Int(i, j));
+        RemoveEmptySlot(i, j);
+    }
+
+    private void RemoveEmptySlot(int i, int j)
+    {
+        RemoveEmptySlot(new Vector2Int(i, j));
     }
 
 
@@ -139,5 +161,10 @@ public class SokobanBoard : MonoBehaviour
 
         var prefabToGenerate = (i + j).IsOdd() ? floorCubeOddPrefab.gameObject : floorCubeEvenPrefab.gameObject;
         Instantiate(prefabToGenerate, new Vector3(i, 0, j), Quaternion.identity, this.transform);
+    }
+
+    public void AddEmptySlot(Vector2Int oldPosition)
+    {
+        AddEmptySlot(oldPosition.x, oldPosition.y);
     }
 }
