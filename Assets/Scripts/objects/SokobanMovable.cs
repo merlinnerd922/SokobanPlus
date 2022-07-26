@@ -2,7 +2,7 @@
 
 public class SokobanMovable : MonoBehaviour
 {
-    protected internal Vector2Int? _currentPosition;
+    protected internal Vector2Int? _currentGridPosition;
     protected internal void UpdateMovement(float deltaTime, Vector2Int oldPosition, Vector2Int newPosition, float
         objElevation)
     {
@@ -23,7 +23,7 @@ public class SokobanMovable : MonoBehaviour
 
     public virtual void SetSokobanPosition(Vector2Int playerPosition)
     {
-        _currentPosition = playerPosition;
+        _currentGridPosition = playerPosition;
     }
 
 }

@@ -6,9 +6,9 @@ public class SokobanBlock : SokobanMovable
     {
         sokobanBoard.RemoveEmptySlot(blockNewPosition);
 
-        if (_currentPosition != null)
+        if (_currentGridPosition != null)
         {
-            sokobanBoard._blockPositions.Remove((Vector2Int) _currentPosition);
+            sokobanBoard._blockPositions.Remove((Vector2Int) _currentGridPosition);
         }
         sokobanBoard._blockPositions[blockNewPosition] = this;
         base.SetSokobanPosition(blockNewPosition);

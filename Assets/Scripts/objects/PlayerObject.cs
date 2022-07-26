@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlayerObject : SokobanMovable
 {
 
-    private const int PLAYER_SPEED = 4;
+    private const int PLAYER_SPEED = 5;
 
 
 
@@ -36,6 +36,7 @@ public class PlayerObject : SokobanMovable
 
         while (deltaTime < 1)
         {
+            // TODO
             UpdateMovement(deltaTime, playerOldPosition, playerNewPosition, PLAYER_ELEVATION);
             if (blockToMoveIsNonNull)
             {
@@ -50,6 +51,8 @@ public class PlayerObject : SokobanMovable
         SetSokobanPosition(playerNewPosition);
         
         _gameManager.sokobanBoard.AddEmptySlot(playerOldPosition);
+        
+        // TODO
         if (blockToMoveIsNonNull)
         {
             blockToMove.SetSokobanPosition((Vector2Int) blockNewPosition);
@@ -63,9 +66,7 @@ public class PlayerObject : SokobanMovable
     }
 
 
-    private float
-        sokobanBlockElevation =>
-        SokobanBoard.BLOCK_ELEVATION;
+    private float sokobanBlockElevation => SokobanBoard.BLOCK_ELEVATION;
 
 
     private SokobanBlock GetBlock(Vector2Int playerNewPosition)
@@ -80,12 +81,9 @@ public class PlayerObject : SokobanMovable
 
     private Vector2Int GetCurrentPosition()
     {
-        Debug.Assert(_currentPosition != null, nameof(_currentPosition) + " != null");
-        return (Vector2Int) _currentPosition;
+        Debug.Assert(_currentGridPosition != null, nameof(_currentGridPosition) + " != null");
+        return (Vector2Int) _currentGridPosition;
     }
-
-
-
 
     public bool CanMove(PlayerDirection directionFromKeyCode)
     {
