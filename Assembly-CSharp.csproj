@@ -46,8 +46,9 @@
      <Compile Include="Assets\Scripts\BoardCube.cs" />
      <Compile Include="Assets\Scripts\Extend.cs" />
      <Compile Include="Assets\Scripts\BoxCube.cs" />
-     <Compile Include="Assets\PlayerObject.cs" />
-     <Compile Include="Assets\BoxSlotPrefab.cs" />
+     <Compile Include="Assets\Scripts\PlayerObject.cs" />
+     <Compile Include="Assets\Scripts\BoxSlotPrefab.cs" />
+     <Compile Include="Assets\Scripts\EmptyCollectionException.cs" />
      <Reference Include="UnityEngine">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.6f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>

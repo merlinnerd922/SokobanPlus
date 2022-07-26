@@ -1,8 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using DefaultNamespace;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 using static DefaultNamespace.Extend;
@@ -27,15 +27,29 @@ public class SokobanBoard : MonoBehaviour
     public PlayerObject playerPrefab;
     private HashSet<Vector2Int> boxSlots;
     public BoxSlotPrefab boxSlotPrefab;
+    private HashSet<Vector2Int> corners;
 
 
     public void Initialize()
     {
         InitializeEmptySpots();
+        CalculateCorners();
+
         AllocateBoxSlots();
         GenerateFloorCubes();
         GenerateBoxes();
         GeneratePlayer();
+    }
+
+    private void CalculateCorners()
+    {
+        corners = new HashSet<Vector2Int>
+        {
+            new(0, 0),
+            new(0, BOARD_LENGTH - 1),
+            new(BOARD_WIDTH - 1, 0),
+            new(BOARD_WIDTH - 1, BOARD_LENGTH - 1)
+        };
     }
 
     private void InitializeEmptySpots()
@@ -52,7 +66,7 @@ public class SokobanBoard : MonoBehaviour
 
     private void AllocateBoxSlots()
     {
-        boxSlots = GetRandomEmptySlots(NUM_BOXES);
+        boxSlots = GetRandomEmptySlots(numSlots: NUM_BOXES);
     }
 
     private HashSet<Vector2Int> GetRandomEmptySlots(int numSlots)
@@ -64,7 +78,7 @@ public class SokobanBoard : MonoBehaviour
     {
         for (int i = 0; i < NUM_BOXES; i++)
         {
-            Vector2Int vec = GetRandomEmptySlot(useBoxSlots: true);
+            Vector2Int vec = GetRandomEmptySlot(useBoxSlots: false, ignoreCorners:true);
             GenerateBox(vec.x, vec.y);
         }
     }
@@ -80,9 +94,25 @@ public class SokobanBoard : MonoBehaviour
         }
     }
 
-    private Vector2Int GetRandomEmptySlot(bool useBoxSlots)
+    private Vector2Int GetRandomEmptySlot(bool useBoxSlots = true, bool ignoreCorners = false)
     {
-        return !useBoxSlots ? _emptySpots.Except(boxSlots).GetRandom() : _emptySpots.GetRandom();
+        HashSet<Vector2Int> theseSlots = new(_emptySpots);
+        if (!useBoxSlots)
+        {
+            theseSlots.RemoveWhere(x => boxSlots.Contains(x));
+        }
+
+        if (ignoreCorners)
+        {
+            theseSlots.RemoveWhere(x => corners.Contains(x));
+        }
+
+        if (theseSlots.Count == 0)
+        {
+            throw new EmptyCollectionException("Unable to generate an empty slot!");
+        }
+
+        return theseSlots.GetRandom();
     }
 
     private void GeneratePlayer()

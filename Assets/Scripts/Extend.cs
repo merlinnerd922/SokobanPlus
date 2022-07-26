@@ -7,7 +7,7 @@ namespace DefaultNamespace
 {
     public static class Extend
     {
-        private static readonly Random RAND = new Random();
+        private static readonly Random RAND = new();
         public static bool IsOdd(this int i)
         {
             return i % 2 == 1;
