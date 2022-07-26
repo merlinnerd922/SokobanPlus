@@ -52,5 +52,10 @@ namespace DefaultNamespace
         {
             return set.OrderBy(_ => RAND.Next()).Take(numElements).ToHashSet();
         }
+
+        public static bool InRange(this int i, int lowerBoundInclusive, int upperBoundExclusive)
+        {
+            return i >= lowerBoundInclusive && i < upperBoundExclusive;
+        }
     }
 }

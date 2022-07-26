@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static DefaultNamespace.Extend;
+using Debug = System.Diagnostics.Debug;
 
 public class SokobanGameManager : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class SokobanGameManager : MonoBehaviour
         HashSetOf(KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.UpArrow, KeyCode.DownArrow);
 
     private readonly Dictionary<KeyCode, PlayerDirection> _keyCodeDirectionMapping =
-        new Dictionary<KeyCode, PlayerDirection>()
+        new()
         {
             {KeyCode.LeftArrow, PlayerDirection.LEFT},
             {KeyCode.RightArrow, PlayerDirection.RIGHT},
@@ -42,15 +43,28 @@ public class SokobanGameManager : MonoBehaviour
         {
             if (_gameState == SokobanGameState.STATIONARY)
             {
-                KeyCode? pressedKeyCode = GetPressedDirectionCode();
-                if (pressedKeyCode != null)
-                {
-                    StartCoroutine(player.Move(GetDirectionFromKeyCode((KeyCode) pressedKeyCode)));
-                }
+                ProcessStationaryState();
             }
 
             yield return null;
         }
+    }
+
+    private void ProcessStationaryState()
+    {
+        KeyCode? pressedKeyCode = GetPressedDirectionCode();
+        if (pressedKeyCode == null)
+        {
+            return;
+        }
+        
+        PlayerDirection directionFromKeyCode = GetDirectionFromKeyCode((KeyCode) pressedKeyCode);
+        if (!player.CanMove(directionFromKeyCode))
+        {
+            return;
+        }
+
+        StartCoroutine(player.Move(directionFromKeyCode));
     }
 
     private PlayerDirection GetDirectionFromKeyCode(KeyCode pressedKeyCode)
@@ -67,9 +81,16 @@ public class SokobanGameManager : MonoBehaviour
                 return keyCode;
             }
         }
-
         return null;
     }
+    
+    public static readonly Dictionary<PlayerDirection, Vector2Int> DIRECTION_VECTOR_MAPPING = new()
+    {
+        {PlayerDirection.LEFT, Vector2Int.left},
+        {PlayerDirection.RIGHT, Vector2Int.right},
+        {PlayerDirection.FORWARD, Vector2Int.up},
+        {PlayerDirection.BACKWARD, Vector2Int.down}
+    };
 }
 
 public enum SokobanGameState

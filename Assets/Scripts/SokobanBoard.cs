@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,8 @@ using Random = System.Random;
 
 public class SokobanBoard : MonoBehaviour
 {
-    private const int BOARD_WIDTH = 10;
-    private const int BOARD_LENGTH = 10;
+    internal const int BOARD_WIDTH = 10;
+    internal const int BOARD_LENGTH = 10;
 
     [FormerlySerializedAs("boardCubeOddPrefab")] [FormerlySerializedAs("boardCubePrefab")]
     public BoardCube floorCubeOddPrefab;
@@ -30,6 +31,8 @@ public class SokobanBoard : MonoBehaviour
     private HashSet<Vector2Int> corners;
     private SokobanGameManager _sokobanGameManager;
     internal PlayerObject thisPlayer;
+    private HashSet<Vector2Int> _blockPositions;
+    private const int BLOCK_ELEVATION = 1;
 
 
     public void Initialize(SokobanGameManager sokobanGameManager)
@@ -85,6 +88,7 @@ public class SokobanBoard : MonoBehaviour
 
     private void GenerateBoxes()
     {
+        _blockPositions = new HashSet<Vector2Int>();
         for (int i = 0; i < NUM_BOXES; i++)
         {
             Vector2Int vec = GetRandomEmptySlot(useBoxSlots: false, ignoreCorners:true);
@@ -141,8 +145,9 @@ public class SokobanBoard : MonoBehaviour
 
     private void GenerateBox(int i, int j)
     {
-        Instantiate(boxPrefab, new Vector3(i, 1, j), Quaternion.identity);
+        Instantiate(boxPrefab, new Vector3(i, BLOCK_ELEVATION, j), Quaternion.identity);
         RemoveEmptySlot(i, j);
+        _blockPositions.Add(new Vector2Int(i, j));
     }
 
     private void RemoveEmptySlot(int i, int j)
@@ -166,5 +171,21 @@ public class SokobanBoard : MonoBehaviour
     public void AddEmptySlot(Vector2Int oldPosition)
     {
         AddEmptySlot(oldPosition.x, oldPosition.y);
+    }
+
+    public bool PositionHasBlock(Vector2Int newPosition)
+    {
+        return _blockPositions.Contains(newPosition);
+    }
+
+    public Vector2Int GetPositionRelativeToInDirection(Vector2Int newPosition, PlayerDirection directionFromKeyCode)
+    {
+        return newPosition + SokobanGameManager.DIRECTION_VECTOR_MAPPING[directionFromKeyCode];
+    }
+
+    public static bool PositionIsOnBoard(Vector2Int somePosition)
+    {
+        return somePosition.x.InRange(lowerBoundInclusive: 0, upperBoundExclusive: SokobanBoard.BOARD_WIDTH) &&
+               somePosition.y.InRange(lowerBoundInclusive: 0, upperBoundExclusive: SokobanBoard.BOARD_LENGTH);
     }
 }

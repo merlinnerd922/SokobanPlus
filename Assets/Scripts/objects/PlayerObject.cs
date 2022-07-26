@@ -1,21 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using DefaultNamespace;
 using UnityEngine;
 using Debug = System.Diagnostics.Debug;
 
 public class PlayerObject : MonoBehaviour
 {
     private SokobanGameManager _gameManager;
-    
+
+    private const int PLAYER_SPEED = 4;
     
     private Vector2Int? _currentPosition;
-    private readonly Dictionary<PlayerDirection, Vector2Int> _directionVectorMapping = new()
-    {
-        {PlayerDirection.LEFT, Vector2Int.left},
-        {PlayerDirection.RIGHT, Vector2Int.right},
-        {PlayerDirection.FORWARD, Vector2Int.up},
-        {PlayerDirection.BACKWARD, Vector2Int.down}
-    };
+
 
     private float PLAYER_ELEVATION = 1;
 
@@ -31,7 +27,7 @@ public class PlayerObject : MonoBehaviour
         while (deltaTime < 1)
         {
             UpdateMovement(deltaTime, oldPosition, newPosition);
-            deltaTime += Time.deltaTime;
+            deltaTime += PLAYER_SPEED * Time.deltaTime;
             yield return null;    
         }
         
@@ -43,7 +39,7 @@ public class PlayerObject : MonoBehaviour
 
     private Vector2Int GetIncrementFromDirection(PlayerDirection dir)
     {
-        return _directionVectorMapping[dir];
+        return SokobanGameManager.DIRECTION_VECTOR_MAPPING[dir];
     }
 
     private Vector2Int GetCurrentPosition()
@@ -69,4 +65,38 @@ public class PlayerObject : MonoBehaviour
     {
         this._currentPosition = playerPosition;
     }
+
+    public bool CanMove(PlayerDirection directionFromKeyCode)
+    {
+        // If the player is on the border, they cannot move.
+        var newPosition = GetCurrentPosition() + GetIncrementFromDirection(directionFromKeyCode);
+        if (!SokobanBoard.PositionIsOnBoard(newPosition))
+        {
+            return false;
+        }
+        
+        // If the player is being blocked by a block, then prevent movement.
+        return !PlayerIsBlockedByBlock(newPosition, directionFromKeyCode);
+    }
+
+    private bool PlayerIsBlockedByBlock(Vector2Int newPosition, PlayerDirection directionFromKeyCode)
+    {
+        // Check if there is actually a block at the targeted position.
+        if (!sokobanBoard.PositionHasBlock(newPosition))
+        {
+            return false;
+        }
+
+        // Case 1: The block is being impeded by another block.
+        var positionRelativeToNewPositionInDirection = sokobanBoard.GetPositionRelativeToInDirection(newPosition, directionFromKeyCode);
+        if (sokobanBoard.PositionHasBlock( positionRelativeToNewPositionInDirection))
+        {
+            return true;
+        }
+
+        // Case 2: The block is being impeded by the edge of the board.
+        return !SokobanBoard.PositionIsOnBoard(positionRelativeToNewPositionInDirection);
+    }
+
+    public SokobanBoard sokobanBoard => _gameManager.sokobanBoard;
 }
