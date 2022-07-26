@@ -51,6 +51,8 @@
      <Compile Include="Assets\Scripts\EmptyCollectionException.cs" />
      <Compile Include="Assets\Scripts\objects\PlayerDirection.cs" />
      <Compile Include="Assets\Scripts\objects\SokobanMovable.cs" />
+     <Compile Include="Assets\Scripts\SokobanBoardGenerator.cs" />
+     <Compile Include="Assets\Scripts\SokobanBoardInfo.cs" />
      <Reference Include="UnityEngine">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.6f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>

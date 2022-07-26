@@ -1,21 +1,22 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SokobanBlock : SokobanMovable
 {
     public override void SetSokobanPosition(Vector2Int blockNewPosition)
     {
-        sokobanBoard.RemoveEmptySlot(blockNewPosition);
+        sokobanBoard.boardInfo.RemoveEmptySlot(blockNewPosition);
 
-        if (_currentGridPosition != null)
+        if (currentGridPosition != null)
         {
-            sokobanBoard._blockPositions.Remove((Vector2Int) _currentGridPosition);
+            sokobanBoard.boardInfo.blockPositions.Remove((Vector2Int) currentGridPosition);
         }
-        sokobanBoard._blockPositions[blockNewPosition] = this;
+        sokobanBoard.boardInfo.blockPositions[blockNewPosition] = this;
         base.SetSokobanPosition(blockNewPosition);
     }
 
     public void InitBlock(int i, int j, SokobanGameManager sokobanGameManager)
     {
-        this.Init(sokobanGameManager, new Vector2Int(i, j));
+        Init(sokobanGameManager, new Vector2Int(i, j));
     }
 }

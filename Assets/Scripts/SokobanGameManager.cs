@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 using static DefaultNamespace.Extend;
 
@@ -7,9 +8,9 @@ public class SokobanGameManager : MonoBehaviour
 {
     public SokobanBoard sokobanBoard;
 
-    internal SokobanGameState _gameState;
+    internal SokobanGameState gameState;
 
-    public PlayerObject player => sokobanBoard.thisPlayer;
+    private PlayerObject player => sokobanBoard.thisPlayer;
 
     private readonly IEnumerable<KeyCode> _directionKeyCodes =
         HashSetOf(KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.UpArrow, KeyCode.DownArrow);
@@ -26,7 +27,7 @@ public class SokobanGameManager : MonoBehaviour
 
     public void Start()
     {
-        sokobanBoard.Initialize(this);
+        sokobanBoard.Init(this);
         StartReceivingInput();
     }
 
@@ -36,11 +37,12 @@ public class SokobanGameManager : MonoBehaviour
     }
 
 
+    [SuppressMessage("ReSharper", "IteratorNeverReturns")]
     private IEnumerator GetStartReceivingInputCoroutine()
     {
         while (true)
         {
-            if (_gameState == SokobanGameState.STATIONARY)
+            if (gameState == SokobanGameState.STATIONARY)
             {
                 ProcessStationaryState();
             }

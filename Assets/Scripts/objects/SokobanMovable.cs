@@ -2,7 +2,8 @@
 
 public class SokobanMovable : MonoBehaviour
 {
-    protected internal Vector2Int? _currentGridPosition;
+    protected internal Vector2Int? currentGridPosition;
+    
     protected internal void UpdateMovement(float deltaTime, Vector2Int oldPosition, Vector2Int newPosition, float
         objElevation)
     {
@@ -11,19 +12,19 @@ public class SokobanMovable : MonoBehaviour
             deltaTime);
     }
     
-    private protected SokobanBoard sokobanBoard => _gameManager.sokobanBoard;
+    private protected SokobanBoard sokobanBoard => gameManager.sokobanBoard;
     
-    private protected SokobanGameManager _gameManager;
+    private protected SokobanGameManager gameManager;
     public void Init(SokobanGameManager sokobanGameManager, Vector2Int playerPosition)
     {
-        _gameManager = sokobanGameManager;
+        gameManager = sokobanGameManager;
         SetSokobanPosition(playerPosition);
     }
 
 
     public virtual void SetSokobanPosition(Vector2Int playerPosition)
     {
-        _currentGridPosition = playerPosition;
+        currentGridPosition = playerPosition;
     }
 
 }
