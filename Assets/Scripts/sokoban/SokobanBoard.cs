@@ -69,16 +69,19 @@ public class SokobanBoard : MonoBehaviour
     {
         Vector2Int vec = boardInfo.GetRandomEmptySlot(sokobanBoard:this, useBoxReceptacles: true, ignoreCorners: this);
         boardInfo.thisPlayer = Instantiate(playerPrefab, new Vector3(vec.x, 1, vec.y), Quaternion.identity);
+        
         Vector2Int playerPosition = new Vector2Int(vec.x, vec.y);
         boardInfo.RemoveEmptySlot(playerPosition);
 
         boardInfo.thisPlayer.Init(_sokobanGameManager, playerPosition);
+        boardInfo.thisPlayer.SetParent(this);
     }
 
     private void GenerateBox(int i, int j)
     {
-        SokobanBlock newPrefab = Instantiate(boxPrefab, new Vector3(i, BLOCK_ELEVATION, j), Quaternion.identity);
-        newPrefab.InitBlock(i, j, _sokobanGameManager);
+        SokobanBlock newBlock = Instantiate(boxPrefab, new Vector3(i, BLOCK_ELEVATION, j), Quaternion.identity);
+        newBlock.InitBlock(i, j, _sokobanGameManager);
+        newBlock.SetParent(this);
     }
 
 
@@ -86,11 +89,13 @@ public class SokobanBoard : MonoBehaviour
     {
         if (boardInfo._boardData.boxReceptaclePositions.Contains(new Vector2Int(i, j)))
         {
-            Instantiate(boxReceptaclePrefab.gameObject, new Vector3(i, 0, j), Quaternion.identity, transform);
+            var boxReceptacle = Instantiate(boxReceptaclePrefab, new Vector3(i, 0, j), Quaternion.identity, transform);
+            boxReceptacle.SetParent(this);
             return;
         }
 
-        var prefabToGenerate = (i + j).IsOdd() ? floorCubeOddPrefab.gameObject : floorCubeEvenPrefab.gameObject;
-        Instantiate(prefabToGenerate, new Vector3(i, 0, j), Quaternion.identity, transform);
+        var prefabToGenerate = (i + j).IsOdd() ? floorCubeOddPrefab : floorCubeEvenPrefab;
+        var newFloorTile = Instantiate(prefabToGenerate, new Vector3(i, 0, j), Quaternion.identity, transform);
+        newFloorTile.SetParent(this);
     }
 }

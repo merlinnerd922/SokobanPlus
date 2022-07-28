@@ -10,6 +10,8 @@ public class SokobanGameManager : MonoBehaviour
 
     internal SokobanGameState gameState;
 
+    public SokobanBoard sokobanBoardPrefab;
+
     private PlayerObject player => sokobanBoard.boardInfo.thisPlayer;
 
     private readonly IEnumerable<KeyCode> _directionKeyCodes =
@@ -26,6 +28,11 @@ public class SokobanGameManager : MonoBehaviour
 
 
     public void Start()
+    {
+        StartNewGame();
+    }
+
+    private void StartNewGame()
     {
         sokobanBoard.Init(this);
         StartReceivingInput();
@@ -92,6 +99,14 @@ public class SokobanGameManager : MonoBehaviour
         {PlayerDirection.FORWARD, Vector2Int.up},
         {PlayerDirection.BACKWARD, Vector2Int.down}
     };
+
+    public void Restart()
+    {
+        // Destroy the previous board and re-init it anew.
+        Destroy(sokobanBoard.gameObject);
+        sokobanBoard = Instantiate(sokobanBoardPrefab);
+        StartNewGame();
+    }
 }
 
 public enum SokobanGameState

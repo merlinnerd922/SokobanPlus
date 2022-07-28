@@ -55,6 +55,7 @@
      <Compile Include="Assets\Scripts\sokoban\SokobanBoardInfo.cs" />
      <Compile Include="Assets\Scripts\sokoban\SokobanBoardData.cs" />
      <Compile Include="Assets\Scripts\sokoban\SVector2Int.cs" />
+     <Compile Include="Assets\RestartButton.cs" />
      <Reference Include="UnityEngine">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.6f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>

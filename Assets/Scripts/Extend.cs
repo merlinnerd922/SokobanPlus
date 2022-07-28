@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
 using UnityEngine;
 using Random = System.Random;
 
@@ -56,6 +57,11 @@ namespace DefaultNamespace
         public static bool InRange(this int i, int lowerBoundInclusive, int upperBoundExclusive)
         {
             return i >= lowerBoundInclusive && i < upperBoundExclusive;
+        }
+
+        public static void SetParent(this MonoBehaviour mb, MonoBehaviour parent)
+        {
+            mb.transform.parent = parent.transform;
         }
     }
 }
