@@ -25,7 +25,6 @@ public class SokobanBoard : MonoBehaviour
     public BoxReceptacle boxReceptaclePrefab;
 
     private SokobanGameManager _sokobanGameManager;
-    internal PlayerObject thisPlayer;
 
     internal const int BLOCK_ELEVATION = 1;
 
@@ -34,34 +33,34 @@ public class SokobanBoard : MonoBehaviour
     public void Init(SokobanGameManager sokobanGameManager)
     {
         _sokobanGameManager = sokobanGameManager;
-        boardInfo = new SokobanBoardInfo(this);
+        boardInfo = SokobanBoardInfo.GenerateBoard();
 
-        boardInfo.InitializeEmptySpots(this);
-
-        boardInfo.AllocateBoxReceptacles(this);
-        GenerateFloorCubes();
+        GenerateFloorTiles();
         GenerateBoxes();
         GeneratePlayer();
     }
 
     private void GenerateBoxes()
     {
-        boardInfo.blockPositions = new Dictionary<Vector2Int, SokobanBlock>();
+        boardInfo.InitBlockPositions();
+
         for (int i = 0; i < SokobanBoardInfo.NUM_BOXES; i++)
         {
             Vector2Int vec = boardInfo.
                 GetRandomEmptySlot(sokobanBoard: this, useBoxReceptacles: false, ignoreCorners: true);
+            
+            
             GenerateBox(vec.x, vec.y);
         }
     }
 
-    private void GenerateFloorCubes()
+    private void GenerateFloorTiles()
     {
         for (int i = 0; i < SokobanBoardInfo.BOARD_WIDTH; i++)
         {
             for (int j = 0; j < SokobanBoardInfo.BOARD_LENGTH; j++)
             {
-                GenerateFloorCube(i, j);
+                GenerateFloorTile(i, j);
             }
         }
     }
@@ -69,11 +68,11 @@ public class SokobanBoard : MonoBehaviour
     private void GeneratePlayer()
     {
         Vector2Int vec = boardInfo.GetRandomEmptySlot(sokobanBoard:this, useBoxReceptacles: true, ignoreCorners: this);
-        thisPlayer = Instantiate(playerPrefab, new Vector3(vec.x, 1, vec.y), Quaternion.identity);
+        boardInfo.thisPlayer = Instantiate(playerPrefab, new Vector3(vec.x, 1, vec.y), Quaternion.identity);
         Vector2Int playerPosition = new Vector2Int(vec.x, vec.y);
         boardInfo.RemoveEmptySlot(playerPosition);
 
-        thisPlayer.Init(_sokobanGameManager, playerPosition);
+        boardInfo.thisPlayer.Init(_sokobanGameManager, playerPosition);
     }
 
     private void GenerateBox(int i, int j)
@@ -83,9 +82,9 @@ public class SokobanBoard : MonoBehaviour
     }
 
 
-    private void GenerateFloorCube(int i, int j)
+    private void GenerateFloorTile(int i, int j)
     {
-        if (boardInfo.boxReceptacles.Contains(new Vector2Int(i, j)))
+        if (boardInfo._boardData.boxReceptaclePositions.Contains(new Vector2Int(i, j)))
         {
             Instantiate(boxReceptaclePrefab.gameObject, new Vector3(i, 0, j), Quaternion.identity, transform);
             return;

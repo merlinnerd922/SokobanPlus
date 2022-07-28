@@ -2,8 +2,12 @@
 
 public class SokobanMovable : MonoBehaviour
 {
-    protected internal Vector2Int? currentGridPosition;
-    
+    public Vector2Int? currentGridPosition
+    {
+        get;
+        private set;
+    }
+
     protected internal void UpdateMovement(float deltaTime, Vector2Int oldPosition, Vector2Int newPosition, float
         objElevation)
     {

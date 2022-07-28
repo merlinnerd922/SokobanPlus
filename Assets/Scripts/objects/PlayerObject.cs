@@ -10,6 +10,11 @@ public class PlayerObject : SokobanMovable
 
     private float _playerElevation = 1;
 
+    public override void SetSokobanPosition(Vector2Int playerPosition)
+    {
+        base.SetSokobanPosition(playerPosition);
+        sokobanBoard.boardInfo._boardData.playerPosition = playerPosition;
+    }
 
     public IEnumerator Move(PlayerDirection dir)
     {

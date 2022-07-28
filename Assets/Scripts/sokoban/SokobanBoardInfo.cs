@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using DefaultNamespace;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 [Serializable]
 public class SokobanBoardInfo
 {
-    private readonly SokobanBoard _sokobanBoard;
-    public HashSet<Vector2Int> emptySpots;
+    internal SokobanBoardData _boardData;
+
     public Lazy<HashSet<Vector2Int>> corners = new(() => new HashSet<Vector2Int>
     {
         new(0, 0),
@@ -15,34 +17,35 @@ public class SokobanBoardInfo
         new(BOARD_WIDTH - 1, 0),
         new(BOARD_WIDTH - 1, BOARD_LENGTH - 1)
     });
-    
-    public Dictionary<Vector2Int, SokobanBlock> blockPositions;
-    public HashSet<Vector2Int> boxReceptacles;
-    
-    public SokobanBoardInfo(SokobanBoard sokobanBoard)
+
+    private Dictionary<Vector2Int, SokobanBlock> blockPositions
     {
-        _sokobanBoard = sokobanBoard;
+        get;
+        set;
     }
+
+    public PlayerObject thisPlayer;
+
 
     internal const int BOARD_WIDTH = 10;
     internal const int BOARD_LENGTH = 10;
     public const int NUM_BOXES = 3;
 
-    public void InitializeEmptySpots(SokobanBoard sokobanBoard)
+    public void InitializeEmptySpots()
     {
-        emptySpots = new HashSet<Vector2Int>();
+        _boardData.emptySpots = new HashSet<SVector2Int>();
         for (int i = 0; i < BOARD_WIDTH; i++)
         {
             for (int j = 0; j < BOARD_LENGTH; j++)
             {
-                sokobanBoard.boardInfo.AddEmptySlot(i, j);
+                AddEmptySlot(i, j);
             }
         }
     }
 
     public void AddEmptySlot(int i, int j)
     {
-        emptySpots.Add(new Vector2Int(i, j));
+        _boardData.emptySpots.Add(new Vector2Int(i, j));
     }
 
     public void AddEmptySlot(Vector2Int oldPosition)
@@ -78,16 +81,16 @@ public class SokobanBoardInfo
 
     public void RemoveEmptySlot(Vector2Int playerPosition)
     {
-        emptySpots.Remove(playerPosition);
+        _boardData.emptySpots.Remove(playerPosition);
     }
 
     public Vector2Int GetRandomEmptySlot(SokobanBoard sokobanBoard,
         bool useBoxReceptacles = true, bool ignoreCorners = false)
     {
-        HashSet<Vector2Int> theseSlots = new(emptySpots);
+        HashSet<SVector2Int> theseSlots = new(_boardData.emptySpots);
         if (!useBoxReceptacles)
         {
-            theseSlots.RemoveWhere(x => sokobanBoard.boardInfo.boxReceptacles.Contains(x));
+            theseSlots.RemoveWhere(x => sokobanBoard.boardInfo._boardData.boxReceptaclePositions.Contains(x));
         }
 
         if (ignoreCorners)
@@ -103,13 +106,43 @@ public class SokobanBoardInfo
         return theseSlots.GetRandom();
     }
 
-    public void AllocateBoxReceptacles(SokobanBoard sokobanBoard)
+    public void AllocateBoxReceptacles()
     {
-        boxReceptacles = sokobanBoard.boardInfo.GetRandomEmptySlots(numSlots: NUM_BOXES);
+        _boardData.boxReceptaclePositions = GetRandomEmptySlots(numSlots: NUM_BOXES);
     }
 
-    public HashSet<Vector2Int> GetRandomEmptySlots(int numSlots)
+    public HashSet<SVector2Int> GetRandomEmptySlots(int numSlots)
     {
-        return emptySpots.GetRandomN(numSlots);
+        return _boardData.emptySpots.GetRandomN(numSlots);
+    }
+
+    public static SokobanBoardInfo GenerateBoard()
+    {
+        var boardInfo = new SokobanBoardInfo
+        {
+            _boardData = new SokobanBoardData()
+        };
+        boardInfo.InitializeEmptySpots();
+        boardInfo.AllocateBoxReceptacles();
+        return boardInfo;
+    }
+
+    public void AddBlock(Vector2Int blockNewPosition, SokobanBlock sokobanBlock)
+    {
+        this.blockPositions[blockNewPosition] = sokobanBlock;
+        this._boardData.blockPositions.Add(blockNewPosition);
+    }
+
+    public void InitBlockPositions()
+    {
+        this.blockPositions = new Dictionary<Vector2Int, SokobanBlock>();
+        this._boardData.blockPositions = new HashSet<SVector2Int>();
+    }
+
+    public void RemoveBlock(Vector2Int? gridPosition)
+    {
+        Debug.Assert(gridPosition != null, nameof(gridPosition) + " != null");
+        this.blockPositions.Remove((Vector2Int) gridPosition);
+        this._boardData.blockPositions.Remove(gridPosition);
     }
 }

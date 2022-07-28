@@ -10,7 +10,7 @@ public class SokobanGameManager : MonoBehaviour
 
     internal SokobanGameState gameState;
 
-    private PlayerObject player => sokobanBoard.thisPlayer;
+    private PlayerObject player => sokobanBoard.boardInfo.thisPlayer;
 
     private readonly IEnumerable<KeyCode> _directionKeyCodes =
         HashSetOf(KeyCode.LeftArrow, KeyCode.RightArrow, KeyCode.UpArrow, KeyCode.DownArrow);

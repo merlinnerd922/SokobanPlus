@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Debug = System.Diagnostics.Debug;
 
 public class SokobanBlock : SokobanMovable
 {
@@ -9,9 +10,10 @@ public class SokobanBlock : SokobanMovable
 
         if (currentGridPosition != null)
         {
-            sokobanBoard.boardInfo.blockPositions.Remove((Vector2Int) currentGridPosition);
+            sokobanBoard.boardInfo.RemoveBlock(currentGridPosition);
         }
-        sokobanBoard.boardInfo.blockPositions[blockNewPosition] = this;
+
+        sokobanBoard.boardInfo.AddBlock(blockNewPosition, this);
         base.SetSokobanPosition(blockNewPosition);
     }
 
