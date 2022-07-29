@@ -46,10 +46,8 @@ public class SokobanBoard : MonoBehaviour
 
         for (int i = 0; i < SokobanBoardInfo.NUM_BOXES; i++)
         {
-            Vector2Int vec = boardInfo.
+            SVector2Int vec = boardInfo.
                 GetRandomEmptySlot(sokobanBoard: this, useBoxReceptacles: false, ignoreCorners: true);
-            
-            
             GenerateBox(vec.x, vec.y);
         }
     }
@@ -67,10 +65,10 @@ public class SokobanBoard : MonoBehaviour
 
     private void GeneratePlayer()
     {
-        Vector2Int vec = boardInfo.GetRandomEmptySlot(sokobanBoard:this, useBoxReceptacles: true, ignoreCorners: this);
+        SVector2Int vec = boardInfo.GetRandomEmptySlot(sokobanBoard:this, useBoxReceptacles: true, ignoreCorners: this);
         boardInfo.thisPlayer = Instantiate(playerPrefab, new Vector3(vec.x, 1, vec.y), Quaternion.identity);
         
-        Vector2Int playerPosition = new Vector2Int(vec.x, vec.y);
+        SVector2Int playerPosition = new SVector2Int(vec.x, vec.y);
         boardInfo.RemoveEmptySlot(playerPosition);
 
         boardInfo.thisPlayer.Init(_sokobanGameManager, playerPosition);
@@ -87,7 +85,7 @@ public class SokobanBoard : MonoBehaviour
 
     private void GenerateFloorTile(int i, int j)
     {
-        if (boardInfo._boardData.boxReceptaclePositions.Contains(new Vector2Int(i, j)))
+        if (boardInfo._boardData.boxReceptaclePositions.Contains(new SVector2Int(i, j)))
         {
             var boxReceptacle = Instantiate(boxReceptaclePrefab, new Vector3(i, 0, j), Quaternion.identity, transform);
             boxReceptacle.SetParent(this);
@@ -97,5 +95,25 @@ public class SokobanBoard : MonoBehaviour
         var prefabToGenerate = (i + j).IsOdd() ? floorCubeOddPrefab : floorCubeEvenPrefab;
         var newFloorTile = Instantiate(prefabToGenerate, new Vector3(i, 0, j), Quaternion.identity, transform);
         newFloorTile.SetParent(this);
+    }
+
+    public bool ReceptaclesContain(SVector2Int currentGridPosition)
+    {
+        return boardInfo._boardData.boxReceptaclePositions.Contains(currentGridPosition);
+    }
+
+    public void IncrementPressedSlots()
+    {
+        boardInfo.SetPressedSlots(boardInfo.GetPressedSlots() + 1);
+    }
+
+    public void DecrementPressedSlots()
+    {
+        boardInfo.SetPressedSlots(boardInfo.GetPressedSlots() - 1);
+    }
+
+    public SokobanGameManager GetGameManager()
+    {
+        return _sokobanGameManager;
     }
 }

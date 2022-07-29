@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /**
- * A serializable version of a Vector2Int.
+ * A serializable version of a SVector2Int.
  */
 [Serializable]
 public class SVector2Int
@@ -11,6 +11,11 @@ public class SVector2Int
     protected bool Equals(SVector2Int other)
     {
         return x == other.x && y == other.y;
+    }
+    
+    public static SVector2Int operator + (SVector2Int thisVec, SVector2Int other)
+    {
+        return new(thisVec.x + other.x, thisVec.y + other.y);
     }
 
     public override bool Equals(object obj)
@@ -27,6 +32,7 @@ public class SVector2Int
 
     public readonly int x;
     public readonly int y;
+    public static SVector2Int left = new(-1, 0);
 
     public SVector2Int(int x, int y)
     {
@@ -34,12 +40,7 @@ public class SVector2Int
         this.y = y;
     }
 
-    public static implicit operator Vector2Int(SVector2Int vec)
-    {
-        return new(vec.x, vec.y);
-    }
-    public static implicit operator SVector2Int(Vector2Int vec)
-    {
-        return new(vec.x, vec.y);
-    }
+    public static SVector2Int right = new(1, 0);
+    public static SVector2Int up = new(0, 1);
+    public static SVector2Int down = new(0, -1);
 }

@@ -47,6 +47,7 @@ public class SokobanGameManager : MonoBehaviour
     [SuppressMessage("ReSharper", "IteratorNeverReturns")]
     private IEnumerator GetStartReceivingInputCoroutine()
     {
+        gameState = SokobanGameState.STATIONARY;
         while (true)
         {
             if (gameState == SokobanGameState.STATIONARY)
@@ -92,12 +93,12 @@ public class SokobanGameManager : MonoBehaviour
         return null;
     }
     
-    public static readonly Dictionary<PlayerDirection, Vector2Int> DIRECTION_VECTOR_MAPPING = new()
+    public static readonly Dictionary<PlayerDirection, SVector2Int> DIRECTION_VECTOR_MAPPING = new()
     {
-        {PlayerDirection.LEFT, Vector2Int.left},
-        {PlayerDirection.RIGHT, Vector2Int.right},
-        {PlayerDirection.FORWARD, Vector2Int.up},
-        {PlayerDirection.BACKWARD, Vector2Int.down}
+        {PlayerDirection.LEFT, SVector2Int.left},
+        {PlayerDirection.RIGHT, SVector2Int.right},
+        {PlayerDirection.FORWARD, SVector2Int.up},
+        {PlayerDirection.BACKWARD, SVector2Int.down}
     };
 
     public void Restart()
@@ -106,6 +107,11 @@ public class SokobanGameManager : MonoBehaviour
         Destroy(sokobanBoard.gameObject);
         sokobanBoard = Instantiate(sokobanBoardPrefab);
         StartNewGame();
+    }
+
+    public void DeclareVictory()
+    {
+        Restart();
     }
 }
 

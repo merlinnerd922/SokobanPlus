@@ -2,13 +2,13 @@
 
 public class SokobanMovable : MonoBehaviour
 {
-    public Vector2Int? currentGridPosition
+    public SVector2Int currentGridPosition
     {
         get;
         private set;
     }
 
-    protected internal void UpdateMovement(float deltaTime, Vector2Int oldPosition, Vector2Int newPosition, float
+    protected internal virtual void UpdateMovement(float deltaTime, SVector2Int oldPosition, SVector2Int newPosition, float
         objElevation)
     {
         transform.position = Vector3.Lerp(new Vector3(oldPosition.x, objElevation, oldPosition.y),
@@ -19,16 +19,17 @@ public class SokobanMovable : MonoBehaviour
     private protected SokobanBoard sokobanBoard => gameManager.sokobanBoard;
     
     private protected SokobanGameManager gameManager;
-    public void Init(SokobanGameManager sokobanGameManager, Vector2Int playerPosition)
+
+    public virtual void Init(SokobanGameManager sokobanGameManager, SVector2Int playerPosition)
     {
         gameManager = sokobanGameManager;
-        SetSokobanPosition(playerPosition);
+        SetSokobanPosition(playerPosition, null);
     }
 
 
-    public virtual void SetSokobanPosition(Vector2Int playerPosition)
+    public virtual void SetSokobanPosition(SVector2Int positionToSet, SVector2Int previousPosition)
     {
-        currentGridPosition = playerPosition;
+        currentGridPosition = positionToSet;
     }
 
 }

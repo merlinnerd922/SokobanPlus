@@ -7,27 +7,28 @@ public class PlayerObject : SokobanMovable
     private const int PLAYER_SPEED = 5;
 
 
+    public PlayerIcon playerIcon;
 
     private float _playerElevation = 1;
 
-    public override void SetSokobanPosition(Vector2Int playerPosition)
+    public override void SetSokobanPosition(SVector2Int positionToSet, SVector2Int previousPosition)
     {
-        base.SetSokobanPosition(playerPosition);
-        sokobanBoard.boardInfo._boardData.playerPosition = playerPosition;
+        base.SetSokobanPosition(positionToSet, previousPosition);
+        sokobanBoard.boardInfo._boardData.playerPosition = positionToSet;
     }
 
     public IEnumerator Move(PlayerDirection dir)
     {
         gameManager.gameState = SokobanGameState.IN_MOTION;
         var thisCurrentPosition = GetCurrentPosition();
-        Vector2Int playerOldPosition = thisCurrentPosition;
-        Vector2Int playerNewPosition = thisCurrentPosition + SokobanBoardInfo.GetVectorInDirection(dir);
+        SVector2Int playerOldPosition = thisCurrentPosition;
+        SVector2Int playerNewPosition = thisCurrentPosition + SokobanBoardInfo.GetVectorInDirection(dir);
 
         // If the player is moving in the direction of a block, then push that block as well.
         SokobanBlock blockToMove = null;
         bool blockToMoveIsNonNull = false;
-        Vector2Int? blockOldPosition = null;
-        Vector2Int? blockNewPosition = null;
+        SVector2Int blockOldPosition = null;
+        SVector2Int blockNewPosition = null;
 
         if (PositionHasBlock(playerNewPosition))
         {
@@ -41,11 +42,13 @@ public class PlayerObject : SokobanMovable
 
         while (deltaTime < 1)
         {
-            // TODO
+            
             UpdateMovement(deltaTime, playerOldPosition, playerNewPosition, _playerElevation);
+            
+            // If the player's pushing a block, then push the block as well.
             if (blockToMoveIsNonNull)
             {
-                blockToMove.UpdateMovement(deltaTime, (Vector2Int) blockOldPosition, (Vector2Int) blockNewPosition,
+                blockToMove.UpdateMovement(deltaTime, (SVector2Int) blockOldPosition, (SVector2Int) blockNewPosition,
                     sokobanBlockElevation);
             }
 
@@ -53,41 +56,46 @@ public class PlayerObject : SokobanMovable
             yield return null;
         }
 
-        SetSokobanPosition(playerNewPosition);
+        SetSokobanPosition(playerNewPosition, playerOldPosition);
         
         gameManager.sokobanBoard.boardInfo.AddEmptySlot(playerOldPosition);
         
-        // TODO
+        // If a block was pushed, set the block's new position.
         if (blockToMoveIsNonNull)
         {
-            blockToMove.SetSokobanPosition((Vector2Int) blockNewPosition);
+            blockToMove.SetSokobanPosition((SVector2Int) blockNewPosition, blockOldPosition);
         }
-        else
-        {
-            gameManager.sokobanBoard.boardInfo.RemoveEmptySlot(playerNewPosition);
-        }
-
+        
+        // Otherwise, only remove info on the player's new position.
+        gameManager.sokobanBoard.boardInfo.RemoveEmptySlot(playerNewPosition);
         gameManager.gameState = SokobanGameState.STATIONARY;
+    }
+
+    protected internal override void UpdateMovement(float deltaTime, SVector2Int oldPosition, SVector2Int newPosition, float
+        objElevation)
+    {
+        base.UpdateMovement(deltaTime, oldPosition, newPosition, objElevation);
+        playerIcon.UpdateLocation();
     }
 
 
     private float sokobanBlockElevation => SokobanBoard.BLOCK_ELEVATION;
 
 
-    private SokobanBlock GetBlock(Vector2Int playerNewPosition)
+    private SokobanBlock GetBlock(SVector2Int playerNewPosition)
     {
         return sokobanBoard.boardInfo.GetBlock(playerNewPosition);
     }
 
-    private bool PositionHasBlock(Vector2Int blockPosition)
+    private bool PositionHasBlock(SVector2Int blockPosition)
     {
         return sokobanBoard.boardInfo.PositionHasBlock(blockPosition);
     }
 
-    private Vector2Int GetCurrentPosition()
+    private SVector2Int GetCurrentPosition()
     {
         Debug.Assert(currentGridPosition != null, nameof(currentGridPosition) + " != null");
-        return (Vector2Int) currentGridPosition;
+        return (SVector2Int) currentGridPosition;
     }
 
     public bool CanMove(PlayerDirection directionFromKeyCode)
@@ -103,7 +111,7 @@ public class PlayerObject : SokobanMovable
         return !PlayerIsBlockedByBlock(newPosition, directionFromKeyCode);
     }
 
-    private bool PlayerIsBlockedByBlock(Vector2Int newPosition, PlayerDirection directionFromKeyCode)
+    private bool PlayerIsBlockedByBlock(SVector2Int newPosition, PlayerDirection directionFromKeyCode)
     {
         // Check if there is actually a block at the targeted position.
         if (!sokobanBoard.boardInfo.PositionHasBlock(newPosition))
