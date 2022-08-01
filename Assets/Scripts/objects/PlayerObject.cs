@@ -75,7 +75,7 @@ public class PlayerObject : SokobanMovable
         objElevation)
     {
         base.UpdateMovement(deltaTime, oldPosition, newPosition, objElevation);
-        playerIcon.UpdateLocation();
+        playerIcon.UpdateArrowSpriteLocation();
     }
 
 
