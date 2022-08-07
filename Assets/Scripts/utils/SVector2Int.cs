@@ -30,8 +30,8 @@ public class SVector2Int
         return HashCode.Combine(x, y);
     }
 
-    public readonly int x;
-    public readonly int y;
+    public int x;
+    public int y;
     public static SVector2Int left = new(-1, 0);
 
     public SVector2Int(int x, int y)

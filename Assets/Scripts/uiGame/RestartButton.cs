@@ -2,17 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RestartButton : MonoBehaviour
+public class RestartButton : SokobanUIButton
 {
     public SokobanGameManager gameManager;
 
     public void Start()
     {
-        var rectTransform = GetComponent<RectTransform>();
-        var anchorsVector = new Vector2(0,0f);
-        rectTransform.pivot = anchorsVector;
-        rectTransform.anchorMin = anchorsVector;
-        rectTransform.anchorMax = anchorsVector;
+        var rectTransform = GetRectTransformAndAnchorToCanvas();
         rectTransform.anchoredPosition = new Vector2(0, 0);
     }
 

@@ -48,10 +48,17 @@ namespace DefaultNamespace
             IEnumerable<T> enumerable = set as T[] ?? set.ToArray();
             return enumerable.ElementAt(RAND.Next(enumerable.Count()));
         }
+        
 
-        public static HashSet<T> GetRandomN<T>(this HashSet<T> set, int numElements)
+        public static SHashSet<T> GetRandomN<T>(this HashSet<T> set, int numElements)
         {
-            return set.OrderBy(_ => RAND.Next()).Take(numElements).ToHashSet();
+            HashSet<T> hashSet = set.OrderBy(_ => RAND.Next()).Take(numElements).ToHashSet();
+            SHashSet<T> sHashSet = new SHashSet<T>();
+            foreach (var item in hashSet)
+            {
+                sHashSet.Add(item);
+            }
+            return sHashSet;
         }
 
         public static bool InRange(this int i, int lowerBoundInclusive, int upperBoundExclusive)

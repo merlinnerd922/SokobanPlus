@@ -43,22 +43,26 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\sokoban\SokobanGameManager.cs" />
      <Compile Include="Assets\Scripts\sokoban\SokobanBoard.cs" />
-     <Compile Include="Assets\Scripts\objects\BoardCube.cs" />
-     <Compile Include="Assets\Scripts\Extend.cs" />
-     <Compile Include="Assets\Scripts\objects\SokobanBlock.cs" />
-     <Compile Include="Assets\Scripts\objects\PlayerObject.cs" />
-     <Compile Include="Assets\Scripts\objects\BoxReceptacle.cs" />
-     <Compile Include="Assets\Scripts\EmptyCollectionException.cs" />
-     <Compile Include="Assets\Scripts\objects\PlayerDirection.cs" />
-     <Compile Include="Assets\Scripts\objects\SokobanMovable.cs" />
+     <Compile Include="Assets\Scripts\sokobanObjects\BoardCube.cs" />
+     <Compile Include="Assets\Scripts\utils\Extend.cs" />
+     <Compile Include="Assets\Scripts\sokobanObjects\SokobanBlock.cs" />
+     <Compile Include="Assets\Scripts\sokobanObjects\PlayerObject.cs" />
+     <Compile Include="Assets\Scripts\sokobanObjects\BoxReceptacle.cs" />
+     <Compile Include="Assets\Scripts\utils\EmptyCollectionException.cs" />
+     <Compile Include="Assets\Scripts\sokobanObjects\PlayerDirection.cs" />
+     <Compile Include="Assets\Scripts\sokobanObjects\SokobanMovable.cs" />
      <Compile Include="Assets\Scripts\sokoban\SokobanBoardGenerator.cs" />
      <Compile Include="Assets\Scripts\sokoban\SokobanBoardInfo.cs" />
      <Compile Include="Assets\Scripts\sokoban\SokobanBoardData.cs" />
-     <Compile Include="Assets\Scripts\sokoban\SVector2Int.cs" />
+     <Compile Include="Assets\Scripts\utils\SVector2Int.cs" />
      <Compile Include="Assets\Scripts\uiGame\RestartButton.cs" />
      <Compile Include="Assets\Scripts\uiGame\PlayerIcon.cs" />
      <Compile Include="Assets\Scripts\VictoryScreen.cs" />
      <Compile Include="Assets\Scripts\MainMenuButton.cs" />
+     <Compile Include="Assets\Scripts\uiGame\ExitButton.cs" />
+     <Compile Include="Assets\Scripts\uiGame\SaveButton.cs" />
+     <Compile Include="Assets\Scripts\uiGame\SokobanUIButton.cs" />
+     <Compile Include="Assets\Scripts\utils\SHashSet.cs" />
      <Reference Include="UnityEngine">
      <HintPath>C:\Program Files\Unity\Hub\Editor\2021.3.6f1\Editor\Data\Managed\UnityEngine\UnityEngine.dll</HintPath>
      </Reference>

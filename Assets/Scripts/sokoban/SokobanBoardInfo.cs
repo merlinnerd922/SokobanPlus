@@ -34,7 +34,7 @@ public class SokobanBoardInfo
 
     public void InitializeEmptySpots()
     {
-        _boardData.emptySpots = new HashSet<SVector2Int>();
+        _boardData.emptySpots = new SHashSet<SVector2Int>();
         for (int i = 0; i < BOARD_WIDTH; i++)
         {
             for (int j = 0; j < BOARD_LENGTH; j++)
@@ -112,7 +112,7 @@ public class SokobanBoardInfo
         _boardData.boxReceptaclePositions = GetRandomEmptySlots(numSlots: NUM_BOXES);
     }
 
-    public HashSet<SVector2Int> GetRandomEmptySlots(int numSlots)
+    public SHashSet<SVector2Int> GetRandomEmptySlots(int numSlots)
     {
         return _boardData.emptySpots.GetRandomN(numSlots);
     }
@@ -143,7 +143,7 @@ public class SokobanBoardInfo
     public void InitBlockPositions()
     {
         this.blockPositions = new Dictionary<SVector2Int, SokobanBlock>();
-        this._boardData.blockPositions = new HashSet<SVector2Int>();
+        this._boardData.blockPositions = new SHashSet<SVector2Int>();
     }
 
     public void RemoveBlock(SVector2Int gridPosition)
