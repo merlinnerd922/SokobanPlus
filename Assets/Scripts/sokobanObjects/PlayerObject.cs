@@ -3,7 +3,6 @@ using UnityEngine;
 
 public class PlayerObject : SokobanMovable
 {
-
     private const int PLAYER_SPEED = 5;
 
 
@@ -11,9 +10,10 @@ public class PlayerObject : SokobanMovable
 
     private float _playerElevation = 1;
 
-    public override void SetSokobanPosition(SVector2Int positionToSet, SVector2Int previousPosition)
+    public override void SetSokobanPosition(SVector2Int positionToSet, SVector2Int previousPosition,
+        MovementSetType setType)
     {
-        base.SetSokobanPosition(positionToSet, previousPosition);
+        base.SetSokobanPosition(positionToSet, previousPosition, setType);
         sokobanBoard.boardInfo._boardData.playerPosition = positionToSet;
     }
 
@@ -42,9 +42,8 @@ public class PlayerObject : SokobanMovable
 
         while (deltaTime < 1)
         {
-            
             UpdateMovement(deltaTime, playerOldPosition, playerNewPosition, _playerElevation);
-            
+
             // If the player's pushing a block, then push the block as well.
             if (blockToMoveIsNonNull)
             {
@@ -56,23 +55,29 @@ public class PlayerObject : SokobanMovable
             yield return null;
         }
 
-        SetSokobanPosition(playerNewPosition, playerOldPosition);
-        
+        SetSokobanPosition(playerNewPosition, playerOldPosition, MovementSetType.MOVE);
+
         gameManager.sokobanBoard.boardInfo.AddEmptySlot(playerOldPosition);
-        
+
         // If a block was pushed, set the block's new position.
         if (blockToMoveIsNonNull)
         {
-            blockToMove.SetSokobanPosition((SVector2Int) blockNewPosition, blockOldPosition);
+            blockToMove.SetSokobanPosition((SVector2Int) blockNewPosition, blockOldPosition, MovementSetType.MOVE);
         }
-        
+
         // Otherwise, only remove info on the player's new position.
-        gameManager.sokobanBoard.boardInfo.RemoveEmptySlot(playerNewPosition);
+        else
+        {
+            gameManager.sokobanBoard.boardInfo.RemoveEmptySlot(playerNewPosition);
+        }
+
+
         gameManager.gameState = SokobanGameState.STATIONARY;
     }
 
-    protected internal override void UpdateMovement(float deltaTime, SVector2Int oldPosition, SVector2Int newPosition, float
-        objElevation)
+    protected internal override void UpdateMovement(float deltaTime, SVector2Int oldPosition, SVector2Int newPosition,
+        float
+            objElevation)
     {
         base.UpdateMovement(deltaTime, oldPosition, newPosition, objElevation);
         playerIcon.UpdateArrowSpriteLocation();
@@ -130,5 +135,4 @@ public class PlayerObject : SokobanMovable
         // Case 2: The block is being impeded by the edge of the board.
         return !SokobanBoardInfo.PositionIsOnBoard(positionRelativeToNewPositionInDirection);
     }
-
 }

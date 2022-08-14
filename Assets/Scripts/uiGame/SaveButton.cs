@@ -13,7 +13,7 @@ public class SaveButton : SokobanUIButton
     void Start()
     {
         var rectTransform = GetRectTransformAndAnchorToCanvas();
-        rectTransform.anchoredPosition = new Vector2(150, 0);
+        rectTransform.anchoredPosition = new Vector2(0, 150);
         gameManager = FindObjectOfType<SokobanGameManager>();
     }
     

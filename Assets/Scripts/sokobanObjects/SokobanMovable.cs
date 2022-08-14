@@ -23,11 +23,12 @@ public class SokobanMovable : MonoBehaviour
     public virtual void Init(SokobanGameManager sokobanGameManager, SVector2Int playerPosition)
     {
         gameManager = sokobanGameManager;
-        SetSokobanPosition(playerPosition, null);
+        SetSokobanPosition(playerPosition, null, MovementSetType.INSTANTIATE);
     }
 
 
-    public virtual void SetSokobanPosition(SVector2Int positionToSet, SVector2Int previousPosition)
+    public virtual void SetSokobanPosition(SVector2Int positionToSet, SVector2Int previousPosition,
+        MovementSetType setType)
     {
         currentGridPosition = positionToSet;
     }

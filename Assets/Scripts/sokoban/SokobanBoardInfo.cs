@@ -18,7 +18,7 @@ public class SokobanBoardInfo
         new(BOARD_WIDTH - 1, BOARD_LENGTH - 1)
     });
 
-    private Dictionary<SVector2Int, SokobanBlock> blockPositions
+    internal Dictionary<SVector2Int, SokobanBlock> blockPositions
     {
         get;
         set;
@@ -82,16 +82,20 @@ public class SokobanBoardInfo
 
     public void RemoveEmptySlot(SVector2Int playerPosition)
     {
+        if (!_boardData.emptySpots.Contains(playerPosition))
+        {
+            throw new InvalidOperationException("Cannot remove an empty slot that isn't present!");
+        }
+
         _boardData.emptySpots.Remove(playerPosition);
     }
 
-    public SVector2Int GetRandomEmptySlot(SokobanBoard sokobanBoard,
-        bool useBoxReceptacles = true, bool ignoreCorners = false)
+    public SVector2Int GetRandomEmptySlot(bool useBoxReceptacles = true, bool ignoreCorners = false)
     {
         HashSet<SVector2Int> theseSlots = new(_boardData.emptySpots);
         if (!useBoxReceptacles)
         {
-            theseSlots.RemoveWhere(x => sokobanBoard.boardInfo._boardData.boxReceptaclePositions.Contains(x));
+            theseSlots.RemoveWhere(x => _boardData.boxReceptaclePositions.Contains(x));
         }
 
         if (ignoreCorners)
@@ -126,18 +130,14 @@ public class SokobanBoardInfo
         boardInfo.InitializeEmptySpots();
         boardInfo.AllocateBoxReceptacles();
         boardInfo.SetPressedSlots(0);
+        boardInfo.SetPlayerInitialPosition();
+        boardInfo.GenerateBoxPositions();
         return boardInfo;
     }
 
     internal void SetPressedSlots(int numPressedSlots)
     {
         pressedSlots = numPressedSlots;
-    }
-
-    public void AddBlock(SVector2Int blockNewPosition, SokobanBlock sokobanBlock)
-    {
-        this.blockPositions[blockNewPosition] = sokobanBlock;
-        this._boardData.blockPositions.Add(blockNewPosition);
     }
 
     public void InitBlockPositions()
@@ -156,5 +156,38 @@ public class SokobanBoardInfo
     public int GetPressedSlots()
     {
         return pressedSlots;
+    }
+
+    public SVector2Int SetPlayerInitialPosition()
+    {
+        SVector2Int vec = this.GetRandomEmptySlot(useBoxReceptacles: true, ignoreCorners: false);
+        this.RemoveEmptySlot(vec);
+        _boardData.playerPosition = vec;
+        return vec;
+    }
+
+    public void GenerateBoxPositions()
+    {
+        this._boardData.blockPositions = new SHashSet<SVector2Int>();
+        for (int i = 0; i < SokobanBoardInfo.NUM_BOXES; i++)
+        {
+            SVector2Int vec = this.GetRandomEmptySlot(useBoxReceptacles: false, ignoreCorners: true);
+            this._boardData.blockPositions.Add(vec);
+        }
+    }
+
+    public bool ReceptaclesContain(SVector2Int currentGridPosition)
+    {
+        return this._boardData.boxReceptaclePositions.Contains(currentGridPosition);
+    }
+
+    public void IncrementPressedSlots()
+    {
+        this.SetPressedSlots(this.GetPressedSlots() + 1);
+    }
+
+    public void DecrementPressedSlots()
+    {
+        this.SetPressedSlots(this.GetPressedSlots() - 1);
     }
 }
